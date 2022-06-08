@@ -69,8 +69,9 @@ if mountpoint not in get_mountinfo():
     try:
         mountpoint.mkdir()
     except (FileExistsError, FileNotFoundError) as e:
-        print(f'{e.strerror}: {e.filename}', file=stderr)
-        exit(1)
+        if not (mountpoint.is_dir() and len(list(mountpoint.iterdir())) == 0):
+            print(f'{e.strerror}: {e.filename}', file=stderr)
+            exit(1)
     res = run([ 'mount' ] + args)
     if res.returncode:
         exit(res.returncode)
